@@ -32,5 +32,8 @@ const links = [
     { "href": "/image-processing", "label": "Image Processing" },
     { "href": "/audio-processing", "label": "Audio Processing" },
     { "href": "/video-processing", "label": "Merge Video Processing" },
-    { "href": "/screen-recording", "label": "Screen Recording" }
+    { "href": "/screen-recording", "label": "Screen Recording" },
+    { "href": "/streaming", "label": "Webcam Capture" },
 ]
+
+// Screen Recording 

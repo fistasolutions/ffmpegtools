@@ -54,6 +54,7 @@ const Page: React.FC = () => {
             if (response.ok) {
                 console.log('Video uploaded successfully:', data.url);
                 setData(data.url);
+                setIsStreaming(false)
             } else {
                 console.error('Upload failed:', data.error);
             }
