@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
 const { convertImage } = require('./controller/imageController');
 const { convertAudio } = require('./controller/audioController');
 const { mergeVideos } = require('./controller/videoController');
-const { ConvertRecording } = require('./controller/screenRecordingController');
 const { convertImageResize } = require('./controller/imageResizeController');
+
+const { ConvertRecording } = require('./controller/screenRecordingController');
 const { convertTrimVedio } = require('./controller/trimVedioController');
 const { convertSplitVedio } = require('./controller/splittingVedioController');
 const { convertStream } = require('./controller/streamVedioController');
