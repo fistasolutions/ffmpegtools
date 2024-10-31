@@ -34,6 +34,9 @@ const links = [
     { "href": "/video-processing", "label": "Merge Video Processing" },
     { "href": "/screen-recording", "label": "Screen Recording" },
     { "href": "/streaming", "label": "Webcam Capture" },
+    { "href": "/encoding", "label": "Vedio Enhance" },
+    { "href": "/vp8", "label": "Vedio Enhance (VP8/VP9)" },
+    { "href": "/conversion", "label": "Vedio Conversion" },
 ]
 
 // Screen Recording 
