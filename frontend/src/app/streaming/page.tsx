@@ -1,4 +1,6 @@
-'use client'
+'use client';
+import Button from '@/src/components/ui/button';
+import Wrapper from '@/src/components/ui/Wrapper';
 import React, { useRef, useState } from 'react';
 
 const Page: React.FC = () => {
@@ -7,6 +9,7 @@ const Page: React.FC = () => {
     const streamRef = useRef<MediaStream | null>(null);
     const [data, setData] = useState('');
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
 
     const startStreaming = async () => {
         try {
@@ -19,7 +22,7 @@ const Page: React.FC = () => {
             }
 
             // Set up MediaRecorder for real-time streaming
-            mediaRecorderRef.current = new MediaRecorder(streamRef.current, { mimeType: 'video/webm' });
+            mediaRecorderRef.current = new MediaRecorder(streamRef.current, { mimeType: 'video/webm; codecs=vp8' });
             mediaRecorderRef.current.ondataavailable = handleDataAvailable;
             mediaRecorderRef.current.start(1000); // Send data every second
 
@@ -42,64 +45,49 @@ const Page: React.FC = () => {
     // Send each chunk to the backend
     const handleDataAvailable = async (event: BlobEvent) => {
         if (event.data.size > 0) {
+            setLoading(true);
             const formData = new FormData();
             formData.append('video', event.data, 'chunk.webm');
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}convert/stream`, {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await response.json();
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}convert/stream`, {
+                    method: 'POST',
+                    body: formData,
+                });
 
-            if (response.ok) {
-                console.log('Video uploaded successfully:', data.url);
-                setData(data.url);
-                setIsStreaming(false)
-            } else {
-                console.error('Upload failed:', data.error);
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('Video uploaded successfully:', data.url);
+                    setData(data.url);
+                    setMessage("Upload Successfully");
+                } else {
+                    console.error('Upload failed:', data.error);
+                    setMessage("Upload Failed");
+                }
+            } catch (uploadError) {
+                console.error('Error during video upload:', uploadError);
+                setMessage("Upload Error");
+            } finally {
+                setLoading(false);
             }
         }
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Live Video Stream</h2>
+        <Wrapper head='Live Video Stream' url={data} message={message}>
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6"></h2>
 
-            <video autoPlay style={{ width: '100%', maxWidth: '600px', borderRadius: '8px' }}></video>
+            <video autoPlay className='mb-4' style={{ width: '100%', maxWidth: '600px', borderRadius: '8px' }}></video>
 
-            <button
+            <Button
+                type="submit"
+                isLoading={loading}
                 onClick={isStreaming ? stopStreaming : startStreaming}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    backgroundColor: isStreaming ? '#e63946' : '#1d3557',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '5px',
-                    marginTop: '20px'
-                }}
             >
                 {isStreaming ? 'Stop Recording' : 'Start Recording'}
-            </button>
-            {loading ? (
-                <p className="mt-4 text-lg text-blue-500">Uploading, please wait...</p>
-            ) : (
-                data && (
-                    <div className="mt-4 text-center">
-                        <h3 className="text-lg text-green-500 mb-2">Stream Videos:</h3>
-                        <a
-                            href={data}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline mb-2 block"
-                        >
-                            {data}
-                        </a>
-                    </div>
-                )
-            )}
-        </div>
+            </Button>
+        </Wrapper>
     );
 };
 

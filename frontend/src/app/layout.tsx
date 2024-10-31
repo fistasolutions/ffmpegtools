@@ -36,7 +36,7 @@ export default function RootLayout({
           <Sidebar />
 
           {/* Main Content */}
-          <main className="flex flex-col items-center justify-center w-full p-8 gap-8">
+          <main className="flex flex-col items-center justify-center w-full p-8 gap-8 bg-gradient-to-br from-purple-500 to-blue-500">
             {children}
           </main>
         </div>
