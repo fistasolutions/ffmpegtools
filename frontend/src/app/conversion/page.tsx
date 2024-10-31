@@ -25,7 +25,7 @@ export default function Home() {
       formData.append('file', file);
       formData.append('format', format);
 
-      const res = await fetch('http://localhost:5000/api/convert', {
+      const res = await fetch('http://localhost:5000/convert', {
         method: 'POST',
         body: formData,
       });

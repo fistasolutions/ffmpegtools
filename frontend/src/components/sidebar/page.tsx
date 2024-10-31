@@ -10,7 +10,7 @@ export default function Sidebar() {
     const isActive = (path: string) => pathname === path;
 
     return (
-        <aside className="hidden sm:flex flex-col items-center gap-4 bg-gray-800 text-white w-96 min-h-full p-4">
+        <aside className="hidden sm:flex h-[850px]  flex-col items-center gap-4 bg-gray-800 text-white w-96 p-4">
             {/* Header */}
             <header className="text-2xl font-bold text-center mb-6">FFmpeg</header>
             {links.map((link: any) => (
@@ -39,5 +39,6 @@ const links = [
     { "href": "/conversion", "label": "Vedio Conversion" },
     { "href": "/video-splitting", "label": "Vedio Trimmer" },
     { "href": "/video-trimmer", "label": "Vedio Splitting" },
-    { "href": "/resize-image", "label": "Resize Image" },
+    { "href": "/resize-image", "label": "Resize Images" },
+    { "href": "/vedioSpeedControl", "label": "Vedio Speed Controll" },
 ]

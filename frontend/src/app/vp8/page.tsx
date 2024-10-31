@@ -25,7 +25,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('codec', codec); 
-      const res = await fetch('http://localhost:5000/api/video/converted', {
+      const res = await fetch('http://localhost:5000/converted', {
         method: 'POST',
         body: formData,
       });
