@@ -1,10 +1,13 @@
-'use client'
+'use client';
+import Button from '@/src/components/ui/button';
+import Wrapper from '@/src/components/ui/Wrapper';
 import React, { useRef, useState } from 'react';
 
 const ScreenRecorder: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [data, setData] = useState('');
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
 
@@ -36,24 +39,24 @@ const ScreenRecorder: React.FC = () => {
 
             mediaRecorderRef.current.start();
             setIsRecording(true);
-            console.log("Recording started");
+            setMessage('Recording...');
         } catch (error) {
             console.error('Error starting screen recording:', error);
+            setMessage('Error starting recording.');
         }
     };
-
 
     // Stop recording
     const stopRecording = () => {
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop();
             setIsRecording(false);
-            console.log("Recording stopped");
+            setMessage('Recording stopped...');
         } else {
             console.log("No recording in progress");
+            setMessage('No recording in progress.');
         }
     };
-
 
     // Send recorded video to server
     const uploadRecording = async (blob: Blob) => {
@@ -62,7 +65,7 @@ const ScreenRecorder: React.FC = () => {
 
         try {
             setLoading(true); // Set loading to true before upload
-            console.log("Preparing to upload video...");
+            setMessage("Preparing to upload video...");
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}convert/screenrecording`, {
                 method: 'POST',
@@ -74,54 +77,31 @@ const ScreenRecorder: React.FC = () => {
             if (response.ok) {
                 console.log('Video uploaded successfully:', data.url);
                 setData(data.url);
+                setMessage('Video uploaded successfully!');
+                setIsRecording(false);
             } else {
                 console.error('Upload failed:', data.error);
+                setMessage(`Upload failed: ${data.error}`); // Show error message
             }
         } catch (error) {
             console.error('Error uploading video:', error);
+            setMessage('Error uploading video.'); // Show error message
         } finally {
             setLoading(false); // Set loading to false after upload
+            setIsRecording(false);
         }
     };
 
-
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Screen Recording</h2>
-            <button
+        <Wrapper head='Screen Recording' url={data} message={message}>
+            <Button
+                type="submit"
+                isLoading={loading}
                 onClick={isRecording ? stopRecording : startRecording}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    backgroundColor: isRecording ? '#e63946' : '#1d3557',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '5px',
-                    marginTop: '20px'
-                }}
             >
                 {isRecording ? 'Stop Recording' : 'Start Recording'}
-            </button>
-
-            {loading ? (
-                <p className="mt-4 text-lg text-blue-500">Uploading, please wait...</p>
-            ) : (
-                data && (
-                    <div className="mt-4 text-center">
-                        <h3 className="text-lg text-green-500 mb-2">Split Videos:</h3>
-                        <a
-                            href={data}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline mb-2 block"
-                        >
-                            {data}
-                        </a>
-                    </div>
-                )
-            )}
-        </div>
+            </Button>
+        </Wrapper>
     );
 };
 

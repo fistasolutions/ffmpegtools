@@ -59,7 +59,7 @@ const Page: React.FC = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="flex items-center justify-center h-screen">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-4 text-center">Resize Image</h2>
                 {errorMessage && <div className="mb-4 text-red-500">{errorMessage}</div>}

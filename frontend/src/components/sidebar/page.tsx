@@ -31,12 +31,13 @@ export default function Sidebar() {
 const links = [
     { "href": "/image-processing", "label": "Image Processing" },
     { "href": "/audio-processing", "label": "Audio Processing" },
-    { "href": "/video-processing", "label": "Merge Video Processing" },
+    { "href": "/merge-vedio", "label": "Merge Video" },
     { "href": "/screen-recording", "label": "Screen Recording" },
     { "href": "/streaming", "label": "Webcam Capture" },
     { "href": "/encoding", "label": "Vedio Enhance" },
     { "href": "/vp8", "label": "Vedio Enhance (VP8/VP9)" },
     { "href": "/conversion", "label": "Vedio Conversion" },
+    { "href": "/video-splitting", "label": "Vedio Trimmer" },
+    { "href": "/video-trimmer", "label": "Vedio Splitting" },
+    { "href": "/resize-image", "label": "Resize Image" },
 ]
-
-// Screen Recording 
