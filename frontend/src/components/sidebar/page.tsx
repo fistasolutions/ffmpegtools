@@ -41,4 +41,7 @@ const links = [
     { "href": "/vedio/merge-vedio", "label": "Video Merge" },
     { "href": "/vedio/trim-vedio", "label": "Vedio Trim" },
     { "href": "/vedio/split-vedio", "label": "Vedio Split" },
+    { "href": "/vedioSpeedControl", "label": "Vedio Speed Control" },
+    { "href": "/encoding", "label": "Vedio Enhance" },
+    { "href": "/vp8", "label": "Vedio Enhance (VP8/VP9)" },
 ]
