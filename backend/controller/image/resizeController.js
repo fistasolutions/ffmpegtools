@@ -2,7 +2,7 @@ const formidable = require('formidable');
 const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
-const cloudinary = require('cloudinary').v2; // Ensure you import Cloudinary
+const cloudinary = require('../../lib/cloudinaryConfig');
 
 const convertImageResize = (req, res) => {
     const form = new formidable.IncomingForm();
@@ -40,7 +40,7 @@ const convertImageResize = (req, res) => {
                 fs.mkdirSync(tempDir);
             }
 
-            const tempOutputPath = path.join(tempDir, `cropped_${Date.now()}.png`);
+            const tempOutputFile = path.join(__dirname, '../uploads', `${Date.now()}.webp`);
 
             ffmpeg(imagePath)
                 .outputOptions([
@@ -49,8 +49,8 @@ const convertImageResize = (req, res) => {
                 ])
                 .on('end', () => {
                     // Upload the cropped image file to Cloudinary
-                    cloudinary.uploader.upload(tempOutputPath, (error, result) => {
-                        fs.unlinkSync(tempOutputPath); // Delete the temp file after uploading
+                    cloudinary.uploader.upload(tempOutputFile, (error, result) => {
+                        fs.unlinkSync(tempOutputFile); // Delete the temp file after uploading
 
                         if (error) {
                             console.error('Error uploading to Cloudinary:', error);
@@ -66,7 +66,7 @@ const convertImageResize = (req, res) => {
                     console.error('FFmpeg error message:', err.message);
                     res.status(500).send('Error cropping image');
                 })
-                .save(tempOutputPath); // Save cropped image to a temporary file
+                .save(tempOutputFile); // Save cropped image to a temporary file
         });
     });
 };

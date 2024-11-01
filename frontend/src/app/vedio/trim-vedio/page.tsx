@@ -1,5 +1,6 @@
 'use client';  // Indicating this is a client component
 
+import Wrapper from '@/src/components/ui/Wrapper';
 import React, { useState } from 'react';
 
 const VideoTrimmer: React.FC = () => {
@@ -7,7 +8,7 @@ const VideoTrimmer: React.FC = () => {
     const [startTime, setStartTime] = useState<string>('');
     const [endTime, setEndTime] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const [trimmedVideoUrl, setTrimmedVideoUrl] = useState<string | null>(null);
+    const [trimmedVideoUrl, setTrimmedVideoUrl] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,28 +52,27 @@ const VideoTrimmer: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-200 p-6 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Video Trimmer</h1>
+        <Wrapper head='Trim Video' url={trimmedVideoUrl} message=''>
             <input
                 type="file"
                 accept="video/*"
                 onChange={handleFileChange}
                 className="mb-4 p-2 border border-gray-400 rounded bg-white"
             />
-            <div className="flex space-x-4 mb-4">
+            <div className="flex space-x-4 mb-4 gap-2 items-center">
                 <input
                     type="text"
                     placeholder="Start Time (in seconds)"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="flex-1 p-2 border border-gray-400 rounded bg-white"
+                    className="p-2 border border-gray-400 rounded bg-white"
                 />
                 <input
                     type="text"
                     placeholder="End Time (in seconds)"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
-                    className="flex-1 p-2 border border-gray-400 rounded bg-white"
+                    className="p-2 border border-gray-400 rounded bg-white"
                 />
             </div>
             <button
@@ -84,20 +84,8 @@ const VideoTrimmer: React.FC = () => {
                 {loading ? 'Trimming...' : 'Trim Video'}
             </button>
             {errorMessage && <div className="mt-4 text-red-500">{errorMessage}</div>}
-            {trimmedVideoUrl && (
-                <div className="mt-4 text-center">
-                    <h3 className="text-lg text-green-500 mb-2">Trimmed Video:</h3>
-                    <a
-                        href={trimmedVideoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline mb-2 block"
-                    >
-                        {trimmedVideoUrl}
-                    </a>
-                </div>
-            )}
-        </div>
+
+        </Wrapper>
     );
 };
 

@@ -20,7 +20,7 @@ export default function Wrapper({ children, message, url, head }: WrapperProps) 
                         target="_blank"
                         className="mt-4 inline-block text-center text-blue-600 underline"
                     >
-                        Download Video
+                        Download
                     </a>
                 )}
             </div>

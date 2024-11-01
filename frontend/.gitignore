@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-
+/src/app/quiz
 # next.js
 /.next/
 /out/

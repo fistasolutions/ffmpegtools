@@ -1,5 +1,5 @@
 export default function Home() {
   return (
-    <h1 className="text-2xl font-semibold">FFMPEG Content</h1>
+    <h1 className="text-4xl font-semibold text-white">FFMPEG Content</h1>
   );
 }

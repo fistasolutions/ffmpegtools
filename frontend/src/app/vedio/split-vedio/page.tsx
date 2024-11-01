@@ -1,4 +1,5 @@
 'use client';
+import Wrapper from '@/src/components/ui/Wrapper';
 import React, { useState } from 'react';
 
 const Page: React.FC = () => {
@@ -63,8 +64,7 @@ const Page: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-200 p-6 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Video Splitter</h1>
+        <Wrapper url='' message='' head="Split Vedio">
             <input
                 type="file"
                 accept="video/*"
@@ -117,7 +117,7 @@ const Page: React.FC = () => {
                     ))}
                 </div>
             )}
-        </div>
+        </Wrapper>
     );
 };
 

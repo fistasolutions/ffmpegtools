@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const { convertImage } = require('./controller/imageController');
-const { convertAudio } = require('./controller/audioController');
+const image = require('./routes/image.route.js')
+const audio = require('./routes/audio.route.js')
+
 const { mergeVideos } = require('./controller/videoController');
-const { convertImageResize } = require('./controller/imageResizeController');
 
 const { ConvertRecording } = require('./controller/screenRecordingController');
 const { convertTrimVedio } = require('./controller/trimVedioController');
@@ -28,10 +28,9 @@ app.use(
 );
 
 // Endpoints
-app.post('/convert/image', convertImage);
-app.post('/convert/audio', convertAudio);
+app.use('/convert', image);
+app.use('/convert', audio);
 app.post('/convert/screenrecording', ConvertRecording);
-app.post('/convert/resizeimage', convertImageResize);
 app.post('/convert/trim', convertTrimVedio);
 app.post('/convert/split', convertSplitVedio);
 app.post('/convert/stream', convertStream);

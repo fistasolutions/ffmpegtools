@@ -1,7 +1,7 @@
 'use client'
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -10,7 +10,7 @@ export default function Sidebar() {
     const isActive = (path: string) => pathname === path;
 
     return (
-        <aside className="hidden sm:flex flex-col items-center gap-4 bg-gray-800 text-white w-96 min-h-full p-4">
+        <aside className="hidden sm:flex flex-col items-center gap-4 bg-gray-800 text-white w-96 min-h-full p-4 overflow-y-scroll">
             {/* Header */}
             <header className="text-2xl font-bold text-center mb-6">FFmpeg</header>
             {links.map((link: any) => (
@@ -29,12 +29,16 @@ export default function Sidebar() {
 
 
 const links = [
-    { "href": "/image-processing", "label": "Image Processing" },
-    { "href": "/audio-processing", "label": "Audio Processing" },
-    { "href": "/merge-vedio", "label": "Merge Video" },
-    { "href": "/screen-recording", "label": "Screen Recording" },
-    { "href": "/streaming", "label": "Webcam Capture" },
-    { "href": "/video-splitting", "label": "Vedio Trimmer" },
-    { "href": "/video-trimmer", "label": "Vedio Splitting" },
-    { "href": "/resize-image", "label": "Resize Image" },
+    { "href": "/image/image-converter", "label": "Image Converter" },
+    { "href": "/image/image-resize", "label": "Image Resize" },
+    { "href": "/audio/audio-converter", "label": "Audio Converter" },
+    { "href": "/audio/audio-extraction", "label": "Audio Extraction" },
+    { "href": "/audio/volume-adjustment", "label": "Volume Adjustment" },
+    { "href": "/audio/channel-control", "label": "Audio Channel" },
+    { "href": "/audio/silence-remover", "label": "Slience Remover" },
+    { "href": "/vedio/screen-recording", "label": "Screen Recording" },
+    { "href": "/vedio/streaming-vedio", "label": "Webcam Capture" },
+    { "href": "/vedio/merge-vedio", "label": "Video Merge" },
+    { "href": "/vedio/trim-vedio", "label": "Vedio Trim" },
+    { "href": "/vedio/split-vedio", "label": "Vedio Split" },
 ]
