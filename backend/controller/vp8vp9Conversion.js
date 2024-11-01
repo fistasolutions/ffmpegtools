@@ -56,7 +56,7 @@ exports.convertedVideo = async (req, res) => {
     res.status(200).json({
       message: 'VP8/VP9 Conversion successful!',
       url: uploadResult.secure_url,
-    });
+    }); 
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Error processing VP8 video', details: error.message });

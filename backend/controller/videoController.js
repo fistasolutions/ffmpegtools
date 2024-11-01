@@ -10,7 +10,7 @@ const cloudinary = require('../lib/cloudinaryConfig');
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-const mergeVideos = (req, res) => {
+const mergeVideos  = (req, res) => {
     const form = new formidable.IncomingForm();
 
     console.log('Starting file upload...');
@@ -92,4 +92,4 @@ const mergeVideos = (req, res) => {
     });
 };
 
-module.exports = { mergeVideos };
+module.exports = { mergeVideos  };
