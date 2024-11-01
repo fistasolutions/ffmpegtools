@@ -1,15 +1,7 @@
 // controller/rotateVideoController.js
 const ffmpeg = require('fluent-ffmpeg');
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('../lib/cloudinaryConfig');
 const fs = require('fs');
-require('dotenv').config();
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 exports.rotateVideo = async (req, res) => {
   if (!req.file) {
@@ -86,7 +78,7 @@ exports.rotateVideo = async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Error processing video rotation', details: error.message });
-    
+
     // Cleanup in case of error
     try {
       if (fs.existsSync(tempInputPath)) await fs.promises.unlink(tempInputPath);

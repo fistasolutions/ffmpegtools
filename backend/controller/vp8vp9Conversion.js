@@ -1,15 +1,9 @@
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('../lib/cloudinaryConfig');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
- 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 exports.convertedVideo = async (req, res) => {
   if (!req.file) {
@@ -20,12 +14,12 @@ exports.convertedVideo = async (req, res) => {
     const { codec } = req.body;
     const inputBuffer = req.file.buffer;
     const tempInputPath = `./temp_input_${Date.now()}.mp4`;
-    const tempOutputPath = `./temp_output_${Date.now()}.webm`;  
+    const tempOutputPath = `./temp_output_${Date.now()}.webm`;
 
     await fs.promises.writeFile(tempInputPath, inputBuffer);
     const videoCodec = codec === 'vp8' ? 'libvpx' : 'libvpx-vp9';
     const resolution = codec === 'vp8' ? '1280x720' : '1920x1080';
-    const videoBitrate = codec === 'vp8' ? '2000k' : '3000k';  
+    const videoBitrate = codec === 'vp8' ? '2000k' : '3000k';
 
     console.log(`FFmpeg starting conversion with codec: ${videoCodec} and resolution: ${resolution}`);
 
@@ -33,7 +27,7 @@ exports.convertedVideo = async (req, res) => {
       ffmpeg(tempInputPath)
         .videoCodec(videoCodec)
         .size(resolution)
-        .videoBitrate(videoBitrate)   
+        .videoBitrate(videoBitrate)
         .outputOptions(['-r 30'])
         .on('end', resolve)
         .on('error', reject)
@@ -56,7 +50,7 @@ exports.convertedVideo = async (req, res) => {
     res.status(200).json({
       message: 'VP8/VP9 Conversion successful!',
       url: uploadResult.secure_url,
-    }); 
+    });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Error processing VP8 video', details: error.message });

@@ -1,13 +1,6 @@
 const ffmpeg = require('fluent-ffmpeg');
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('../lib/cloudinaryConfig');
 const fs = require('fs');
-require('dotenv').config();
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 exports.addWatermark = async (req, res) => {
   if (!req.files || !req.files.video || !req.files.watermark) {
@@ -24,7 +17,7 @@ exports.addWatermark = async (req, res) => {
     await fs.promises.writeFile(tempWatermarkPath, req.files.watermark[0].buffer);
 
     const position = req.body.position || 'bottomright';
-    
+
     // Get overlay position coordinates
     const overlayPosition = getOverlayPosition(position);
 
@@ -83,7 +76,7 @@ exports.addWatermark = async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Error processing video watermark', details: error.message });
-    
+
     // Cleanup in case of error
     try {
       if (fs.existsSync(tempVideoPath)) await fs.promises.unlink(tempVideoPath);

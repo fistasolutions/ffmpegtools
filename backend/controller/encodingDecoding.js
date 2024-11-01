@@ -1,15 +1,9 @@
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('../lib/cloudinaryConfig');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 exports.convertVideo = async (req, res) => {
   if (!req.file) {
@@ -28,8 +22,8 @@ exports.convertVideo = async (req, res) => {
 
     await new Promise((resolve, reject) => {
       ffmpeg(tempInputPath)
-      .videoCodec(selectedCodec)
-      .size(resolution)
+        .videoCodec(selectedCodec)
+        .size(resolution)
         .on('end', resolve)
         .on('error', reject)
         .save(tempOutputPath);
@@ -57,9 +51,9 @@ exports.convertVideo = async (req, res) => {
     });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error processing video',
-      details: error.message 
+      details: error.message
     });
   }
 };

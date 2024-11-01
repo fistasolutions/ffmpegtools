@@ -1,19 +1,12 @@
 const ffmpeg = require('fluent-ffmpeg');
-const { v2: cloudinary } = require('cloudinary');
+const cloudinary = require('../lib/cloudinaryConfig');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config();
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 const speedController = async (req, res) => {
-  const { speed } = req.body;  
+  const { speed } = req.body;
   const tempFilePath = path.join(__dirname, '../uploads', `${Date.now()}_${req.file.originalname}`);
-  
+
   try {
     fs.writeFileSync(tempFilePath, req.file.buffer);
 
