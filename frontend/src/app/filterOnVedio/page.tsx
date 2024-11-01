@@ -11,7 +11,7 @@ interface ProcessedVideo {
 export default function VideoFilter() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [selectedFilter, setSelectedFilter] = useState<string>('blur'); 
+  const [selectedFilter, setSelectedFilter] = useState<string>('blur');
   const [loading, setLoading] = useState(false);
   const [processedVideo, setProcessedVideo] = useState<ProcessedVideo | null>(null);
   const [error, setError] = useState<string>('');
@@ -69,7 +69,7 @@ export default function VideoFilter() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
+    <div className="w-full p-4 space-y-6">
       <div className="p-6">
         <h2 className="text-2xl text-white font-bold mb-6">Video Filter Application</h2>
         <div {...getRootProps()} className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors duration-200 bg-white ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}`}>
@@ -84,14 +84,14 @@ export default function VideoFilter() {
             </div>
           )}
         </div>
- 
+
         {previewUrl && (
           <div className="mt-6">
             <h3 className="text-lg text-white font-semibold mb-2">Original Video</h3>
             <video src={previewUrl} controls className="w-86 rounded-lg" style={{ maxHeight: '400px' }} />
           </div>
         )}
-    
+
         <div className="mt-6">
           <h3 className="text-lg text-white font-semibold mb-2">Select Filter</h3>
           <select className='border border-1 w-full my-2 h-12 px-4 rounded' value={selectedFilter} onChange={(e) => setSelectedFilter(e.target.value)}>
@@ -99,7 +99,7 @@ export default function VideoFilter() {
             <option value="sharpen">Sharpen</option>
           </select>
         </div>
-   
+
         <button onClick={handleApplyFilter} disabled={!selectedFile || loading} className="w-full bg-red-600 rounded text-white py-3 mt-4">
           {loading ? (
             <div className='flex flex-row justify-center items-center'>
@@ -110,7 +110,7 @@ export default function VideoFilter() {
             'Apply Filter'
           )}
         </button>
-    
+
       </div>
       {processedVideo && (
         <div className="p-6">
