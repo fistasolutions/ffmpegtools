@@ -10,7 +10,11 @@ export default function Sidebar() {
     const isActive = (path: string) => pathname === path;
 
     return (
+<<<<<<< HEAD
         <aside className="hidden sm:flex flex-col items-center gap-4 bg-gray-800 text-white w-96 min-h-full p-4 overflow-y-scroll">
+=======
+        <aside className="hidden min-h-screen sm:flex  h-full flex-col items-center gap-4 bg-gray-800 text-white w-96 p-4">
+>>>>>>> 8405abb72cc7823c47c3cc7e2c6bb805aba1c8cb
             {/* Header */}
             <header className="text-2xl font-bold text-center mb-6">FFmpeg</header>
             {links.map((link: any) => (
@@ -44,4 +48,15 @@ const links = [
     { "href": "/vedioSpeedControl", "label": "Vedio Speed Control" },
     { "href": "/encoding", "label": "Vedio Enhance" },
     { "href": "/vp8", "label": "Vedio Enhance (VP8/VP9)" },
+<<<<<<< HEAD
+=======
+    { "href": "/conversion", "label": "Vedio Conversion" },
+    { "href": "/video-splitting", "label": "Vedio Trimmer" },
+    { "href": "/video-trimmer", "label": "Vedio Splitting" },
+    { "href": "/resize-image", "label": "Resize Images" },
+    { "href": "/vedioSpeedControl", "label": "Vedio Speed Controll" },
+    { "href": "/rotateVedio", "label": "Vedio Rotation" },
+    { "href": "/vedioWatermark", "label": "Watermark on Vedio" },
+    { "href": "/filterOnVedio", "label": "Filters on Vedio" },
+>>>>>>> 8405abb72cc7823c47c3cc7e2c6bb805aba1c8cb
 ]
