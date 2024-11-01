@@ -31,12 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="h-screen overflow-y-scroll flex">
+        <div className="min-h-screen overflow-y-scroll flex">
           {/* Sidebar */}
           <Sidebar />
 
           {/* Main Content */}
-          <main className="flex h-[850px] flex-col items-center justify-center w-full p-8 gap-8 bg-gradient-to-br from-purple-500 to-blue-500">
+          <main className=" flex-col items-center justify-center w-full p-8 gap-8 bg-gradient-to-br from-purple-500 to-blue-500">
             {children}
           </main>
         </div>
