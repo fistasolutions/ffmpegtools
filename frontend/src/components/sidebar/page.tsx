@@ -48,4 +48,9 @@ const links = [
     { "href": "/rotateVedio", "label": "Vedio Rotation" },
     { "href": "/vedioWatermark", "label": "Watermark on Vedio" },
     { "href": "/filterOnVedio", "label": "Filters on Vedio" },
+    { "href": "/vedioRatioAdjust", "label": "Ratio Adjustment" },
+    { "href": "/frameRate", "label": "Frame rate Adjustment" },
+    { "href": "/vedioCrop", "label": "Crop Vedio" },
+    { "href": "/vedioLooping", "label": "Vedio GIF" },
+    { "href": "/extractFrame", "label": "Frame Extract" },
 ]
