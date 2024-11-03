@@ -4,6 +4,7 @@ const path = require("path");
 const multer = require("multer");
 const image = require("./routes/image.route.js");
 const audio = require("./routes/audio.route.js");
+const muzammil = require("./routes/muzammil.route.js");
 const { ConvertRecording } = require("./controller/screenRecordingController");
 const { convertTrimVedio } = require("./controller/trimVedioController");
 const { convertSplitVedio } = require("./controller/splittingVedioController");
@@ -43,6 +44,7 @@ app.use(
 );
 
 // Endpoints
+app.use("/convert", muzammil);
 app.use("/convert", image);
 app.use("/convert", audio);
 app.post("/convert/screenrecording", ConvertRecording);
