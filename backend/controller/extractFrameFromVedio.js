@@ -10,10 +10,10 @@ const extractFrames = async (req, res) => {
         }
 
         const videoBuffer = req.file.buffer;
-        const frameRate = req.body.frameRate || 1;
+        const requestedFrames = parseInt(req.body.frameRate) || 1; // This will now be the exact number of frames
         const outputDir = path.join(__dirname, '../uploads/frames');
         const tempVideoPath = path.join(__dirname, `../uploads/temp-${uuidv4()}.mp4`);
-        
+
         // Ensure directories exist
         if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
@@ -27,7 +27,7 @@ const extractFrames = async (req, res) => {
         const framesPath = path.join(outputDir, batchId);
         fs.mkdirSync(framesPath);
 
-        // Get video duration first
+        // Get video duration
         const getDuration = () => {
             return new Promise((resolve, reject) => {
                 ffmpeg.ffprobe(tempVideoPath, (err, metadata) => {
@@ -38,12 +38,21 @@ const extractFrames = async (req, res) => {
         };
 
         const duration = await getDuration();
-        // Calculate maximum frames based on duration and frame rate
-        const maxFrames = Math.ceil(duration * frameRate);
-        
+
+        // Calculate the time interval between frames
+        const interval = duration / requestedFrames;
+
         await new Promise((resolve, reject) => {
             ffmpeg(tempVideoPath)
-                .fps(frameRate)
+                .screenshots({
+                    count: requestedFrames,
+                    timemarks: Array.from({ length: requestedFrames }, (_, i) => 
+                        Math.min(i * interval, duration - 0.001) // Ensure we don't exceed video duration
+                    ),
+                    folder: framesPath,
+                    filename: 'frame-%d.jpg',
+                    size: '480x?'
+                })
                 .on('end', () => {
                     fs.unlinkSync(tempVideoPath);
                     resolve();
@@ -51,12 +60,6 @@ const extractFrames = async (req, res) => {
                 .on('error', (err) => {
                     fs.unlinkSync(tempVideoPath);
                     reject(err);
-                })
-                .screenshots({
-                    count: Math.min(maxFrames, 300), // Limit maximum frames to 300
-                    folder: framesPath,
-                    filename: 'frame-%d.jpg',
-                    size: '480x?', // Reduce output size
                 });
         });
 
@@ -64,11 +67,7 @@ const extractFrames = async (req, res) => {
             .filter(file => file.endsWith('.jpg'))
             .map(file => `/uploads/frames/${batchId}/${file}`);
 
-        res.json({
-            success: true,
-            frames,
-            batchId
-        });
+        res.json({ success: true, frames, batchId });
 
     } catch (error) {
         console.error('Error extracting frames:', error);
@@ -76,6 +75,4 @@ const extractFrames = async (req, res) => {
     }
 };
 
-module.exports = {
-    extractFrames
-};
+module.exports = { extractFrames };

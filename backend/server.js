@@ -71,6 +71,7 @@ app.post("/convert/trim", convertTrimVedio);
 app.post("/convert/split", convertSplitVedio);
 app.post("/convert/stream", convertStream);
 app.post("/merge/videos", mergeVideos);
+app.use("/uploads/frames", express.static(path.join(__dirname, "uploads/frames")));
 app.post('/extract-frames', upload.single('video'), extractFrames);
 // app.post('/vedioController',vedioController );
 app.post("/rotate", upload.single("video"), rotateVideo);
