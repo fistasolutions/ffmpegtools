@@ -133,7 +133,7 @@ const allLinks = [
         child: [
             { href: "/metadata/editing", label: "Metadata Editing" },
             { href: "/metadata/analysis", label: "Stream Analysis" },
-            { href: "/metadata/bitrate-management", label: "Bitrate Management" },
+            { href: "/metadata/bitrateManage", label: "Bitrate Management" },
             { href: "/metadata/detection", label: "Format Detection" },
             { href: "/metadata/preview-grids", label: "Thumbnail Preview Grids" }
         ]

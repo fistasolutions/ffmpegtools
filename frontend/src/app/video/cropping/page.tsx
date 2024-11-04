@@ -1,248 +1,216 @@
 'use client'
-import React, { useState, useRef } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Slider from '@mui/material/Slider';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { styled } from '@mui/material/styles';
 
-const StyledVideo = styled('video')({
-  maxWidth: '100%',
-  height: 'auto',
-  borderRadius: '8px',
-});
+import { useState, useRef, ChangeEvent } from 'react';
+import axios from 'axios';
 
-const VideoCropPad = () => {
+export default function VideoEditor() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [videoPreview, setVideoPreview] = useState<string>('');
-  const [processedVideo, setProcessedVideo] = useState<string>('');
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [processedUrl, setProcessedUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [mode, setMode] = useState<'crop' | 'padding'>('crop');
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Dimensions state
-  const [dimensions, setDimensions] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
+  const [cropSettings, setCropSettings] = useState({
+    cropX: 0,
+    cropY: 0,
+    cropWidth: 0,
+    cropHeight: 0,
   });
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [padSettings, setPadSettings] = useState({
+    padTop: 0,
+    padRight: 0,
+    padBottom: 0,
+    padLeft: 0,
+    padColor: 'black',
+  });
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      setVideoPreview(previewUrl);
-      setProcessedVideo('');
+      setProcessedUrl('');
       setError('');
-
-      // Reset dimensions when new video is selected
-      const video = document.createElement('video');
-      video.src = previewUrl;
-      video.onloadedmetadata = () => {
-        setDimensions({
-          x: 0,
-          y: 0,
-          width: video.videoWidth,
-          height: video.videoHeight,
-        });
-      };
+      
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      
+      // Reset settings when new file is selected
+      if (videoRef.current) {
+        videoRef.current.onloadedmetadata = () => {
+          const width = videoRef.current?.videoWidth || 0;
+          const height = videoRef.current?.videoHeight || 0;
+          setCropSettings({
+            cropX: 0,
+            cropY: 0,
+            cropWidth: width,
+            cropHeight: height,
+          });
+        };
+      }
     }
   };
 
-  const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMode(event.target.value as 'crop' | 'padding');
-  };
-
-  const handleDimensionChange = (dimension: keyof typeof dimensions) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = Number(event.target.value);
-    setDimensions(prev => ({
+  const handleCropChange = (field: string, value: number) => {
+    setCropSettings(prev => ({
       ...prev,
-      [dimension]: value
+      [field]: Math.max(0, value) 
     }));
   };
 
-  const processVideo = async () => {
+  const handlePadChange = (field: string, value: number | string) => {
+    setPadSettings(prev => ({
+      ...prev,
+      [field]: typeof value === 'number' ? Math.max(0, value) : value
+    }));
+  };
+
+  const handleSubmit = async () => {
     if (!selectedFile) return;
 
     setLoading(true);
     setError('');
+    setProcessedUrl('');
 
     const formData = new FormData();
     formData.append('video', selectedFile);
-    formData.append('type', mode);
-    formData.append('x', dimensions.x.toString());
-    formData.append('y', dimensions.y.toString());
-    formData.append('width', dimensions.width.toString());
-    formData.append('height', dimensions.height.toString());
+    
+    Object.entries(cropSettings).forEach(([key, value]) => {
+      formData.append(key, Math.floor(value).toString());
+    });
+
+    Object.entries(padSettings).forEach(([key, value]) => {
+      formData.append(key, value.toString());
+    });
 
     try {
-      const response = await fetch('http://localhost:5000/process-video', {
-        method: 'POST',
-        body: formData,
+      const response = await axios.post('http://localhost:5000/process-video', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 300000,  
+        responseType: 'json'
       });
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.message);
+      if (response.data.videoUrl) {
+        // Add timestamp to prevent browser caching
+        const timestamp = Date.now();
+        setProcessedUrl(`http://localhost:5000${response.data.videoUrl}?t=${timestamp}`);
+      } else {
+        setError('No video URL in response');
       }
-
-      setProcessedVideo(data.videoUrl);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch (error: any) {
+      console.error('Error processing video:', error);
+      setError(
+        error.response?.data?.details || 
+        error.response?.data?.error || 
+        'Error processing video. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 800, margin: '0 auto', padding: 3 }}>
-      <Card>
-        <CardHeader 
-          title="Video Crop & Padding Tool" 
-          subheader="Upload a video to crop or add padding"
-        />
-        <CardContent>
-          <Box sx={{ mb: 3 }}>
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-              id="video-upload"
+    <div className="min-h-screen p-8 bg-gray-100">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Video Editor</h1>
+        
+        <div className="mb-8">
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleFileChange}
+            className="mb-4"
+          />
+        </div>
+
+        {previewUrl && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Preview</h2>
+            <video
+              ref={videoRef}
+              src={previewUrl}
+              controls
+              className="w-full max-h-[400px] bg-black"
             />
-            <label htmlFor="video-upload">
-              <Button
-                variant="contained"
-                component="span"
-                color="primary"
-                fullWidth
-              >
-                Choose Video
-              </Button>
-            </label>
-          </Box>
+          </div>
+        )}
 
-          {videoPreview && (
-            <>
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Original Video
-                </Typography>
-                <StyledVideo
-                  ref={videoRef}
-                  src={videoPreview}
-                  controls
+        <div className="grid grid-cols-2 gap-8 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-4">Crop Settings</h3>
+            {Object.entries(cropSettings).map(([field, value]) => (
+              <div key={field} className="mb-4">
+                <label className="block mb-2 capitalize">
+                  {field.replace('crop', '')}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={value}
+                  onChange={(e) => handleCropChange(field, parseInt(e.target.value) || 0)}
+                  className="w-full p-2 border rounded"
                 />
-              </Box>
+              </div>
+            ))}
+          </div>
 
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Adjustment Mode
-                </Typography>
-                <RadioGroup
-                  row
-                  value={mode}
-                  onChange={handleModeChange}
-                >
-                  <FormControlLabel
-                    value="crop"
-                    control={<Radio />}
-                    label="Crop"
-                  />
-                  <FormControlLabel
-                    value="padding"
-                    control={<Radio />}
-                    label="Padding"
-                  />
-                </RadioGroup>
-              </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Dimensions
-                </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                  <TextField
-                    label="X Position"
-                    type="number"
-                    value={dimensions.x}
-                    onChange={handleDimensionChange('x')}
-                  />
-                  <TextField
-                    label="Y Position"
-                    type="number"
-                    value={dimensions.y}
-                    onChange={handleDimensionChange('y')}
-                  />
-                  <TextField
-                    label="Width"
-                    type="number"
-                    value={dimensions.width}
-                    onChange={handleDimensionChange('width')}
-                  />
-                  <TextField
-                    label="Height"
-                    type="number"
-                    value={dimensions.height}
-                    onChange={handleDimensionChange('height')}
-                  />
-                </Box>
-              </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={processVideo}
-                  disabled={loading}
-                  fullWidth
-                >
-                  {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    'Process Video'
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-4">Padding Settings</h3>
+            {Object.entries(padSettings).map(([field, value]) => (
+              <div key={field} className="mb-4">
+                <label className="block mb-2 capitalize">
+                  {field.replace('pad', '')}
+                </label>
+                <input
+                  type={field === 'padColor' ? 'text' : 'number'}
+                  min={field === 'padColor' ? undefined : "0"}
+                  value={value}
+                  onChange={(e) => handlePadChange(
+                    field, 
+                    field === 'padColor' ? e.target.value : parseInt(e.target.value) || 0
                   )}
-                </Button>
-              </Box>
-            </>
-          )}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
-          {processedVideo && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Processed Video
-              </Typography>
-              <StyledVideo
-                src={processedVideo}
-                controls
-              />
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-    </Box>
+        <button
+          onClick={handleSubmit}
+          disabled={!selectedFile || loading}
+          className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+        >
+          {loading ? 'Processing...' : 'Process Video'}
+        </button>
+
+        {processedUrl && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Processed Video</h2>
+            <video
+              src={processedUrl}
+              controls
+              className="w-full max-h-[400px] bg-black"
+            />
+            <a 
+              href={processedUrl}
+              download
+              className="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+            >
+              Download Processed Video
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
   );
-};
-
-export default VideoCropPad;
+}
