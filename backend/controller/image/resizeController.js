@@ -40,7 +40,7 @@ const convertImageResize = (req, res) => {
                 fs.mkdirSync(tempDir);
             }
 
-            const tempOutputFile = path.join(__dirname, '../uploads', `${Date.now()}.webp`);
+            const tempOutputFile = path.join(__dirname, '../../uploads', `${Date.now()}.webp`);
 
             ffmpeg(imagePath)
                 .outputOptions([

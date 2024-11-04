@@ -18,7 +18,7 @@ const convertImage = (req, res) => {
         const inputFile = files.image[0].filepath;
 
         // Create a temporary output file path for the converted image
-        const tempOutputFile = path.join(__dirname, '../uploads', `${Date.now()}.webp`);
+        const tempOutputFile = path.join(__dirname, '../../uploads', `${Date.now()}.webp`);
 
         ffmpeg(inputFile)
             .toFormat('webp')

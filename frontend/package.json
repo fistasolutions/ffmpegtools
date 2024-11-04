@@ -25,6 +25,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.10",
+    "react-player": "^2.16.0",
     "react-tabs": "^6.0.2",
     "tailwind-merge": "^2.5.4"
   },

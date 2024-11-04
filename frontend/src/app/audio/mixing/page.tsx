@@ -27,7 +27,7 @@ const AudioMixing: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/convert/audio/mixAudio ", // Your backend endpoint
+        "http://localhost:5000/convert/audio/mixAudio", // Your backend endpoint
         formData,
         {
           headers: {
@@ -36,10 +36,8 @@ const AudioMixing: React.FC = () => {
         }
       );
       setUploadUrl(response.data.url); // URL of mixed audio
-      alert(`Audio mixed successfully! URL: ${response.data.url}`);
     } catch (error) {
       console.error("Error:", error);
-      alert("Error mixing audio");
     } finally {
       setLoading(false); // Set loading to false when processing is done
     }
