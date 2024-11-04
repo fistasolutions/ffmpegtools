@@ -1,60 +1,67 @@
 const ffmpeg = require('fluent-ffmpeg');
-const cloudinary = require('../lib/cloudinaryConfig');
 const fs = require('fs');
 const path = require('path');
 
 const cropVideo = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No video file provided' });
+      return res.status(400).json({ error: 'No video file uploaded' });
     }
 
-    const { type, x, y, width, height } = req.body;
-    // Convert string values to numbers
-    const numX = parseInt(x, 10);
-    const numY = parseInt(y, 10);
-    const numWidth = parseInt(width, 10);
-    const numHeight = parseInt(height, 10);
+    const inputVideo = req.file;
+    
+    // Create directories if they don't exist
+    const tempDir = path.join(__dirname, '../uploads/temp');
+    const outputDir = path.join(__dirname, '../uploads/processed');
+    [tempDir, outputDir].forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    });
 
-    const inputPath = req.file.path;
+    const inputPath = path.join(tempDir, `input-${Date.now()}-${inputVideo.originalname}`);
+    fs.writeFileSync(inputPath, inputVideo.buffer);
+
+    // Parse numeric values from request body
+    const {
+      cropX = 0,
+      cropY = 0,
+      cropWidth,
+      cropHeight,
+      padTop = 0,
+      padRight = 0,
+      padBottom = 0,
+      padLeft = 0,
+      padColor = 'black'
+    } = req.body;
+
     const outputFileName = `processed-${Date.now()}.mp4`;
-    const outputPath = path.join(__dirname, '../uploads/processed', outputFileName);
-
-    // Ensure directory exists
-    if (!fs.existsSync(path.join(__dirname, '../uploads/processed'))) {
-      fs.mkdirSync(path.join(__dirname, '../uploads/processed'), { recursive: true });
-    }
+    const outputPath = path.join(outputDir, outputFileName);
 
     return new Promise((resolve, reject) => {
-      let command = ffmpeg(inputPath);
+      let command = ffmpeg(inputPath)
+        // Add input options to handle potentially corrupt input
+        .inputOptions(['-ignore_unknown'])
+        // Add output options for better compatibility
+        .outputOptions([
+          '-c:v libx264',        // Use H.264 codec
+          '-preset medium',      // Balance between speed and quality
+          '-movflags +faststart', // Enable fast start for web playback
+          '-pix_fmt yuv420p'     // Use widely supported pixel format
+        ]);
 
-      if (type === 'crop') {
-        command
-          .videoFilters([
-            {
-              filter: 'crop',
-              options: {
-                w: numWidth,
-                h: numHeight,
-                x: numX,
-                y: numY
-              }
-            }
-          ]);
-      } else if (type === 'padding') {
-        command
-          .videoFilters([
-            {
-              filter: 'pad',
-              options: {
-                w: numWidth,
-                h: numHeight,
-                x: numX,
-                y: numY,
-                color: 'black'
-              }
-            }
-          ]);
+      // Apply cropping if dimensions are provided
+      if (cropWidth && cropHeight) {
+        command = command.videoFilters([
+          `crop=${cropWidth}:${cropHeight}:${cropX}:${cropY}`
+        ]);
+      }
+
+      // Apply padding if any padding value is non-zero
+      if (padTop || padRight || padBottom || padLeft) {
+        command = command.videoFilters([
+          `pad=width=in_w+${padLeft}+${padRight}:height=in_h+${padTop}+${padBottom}:x=${padLeft}:y=${padTop}:color=${padColor}`
+        ]);
       }
 
       command
@@ -62,39 +69,42 @@ const cropVideo = async (req, res) => {
         .on('start', (commandLine) => {
           console.log('FFmpeg command:', commandLine);
         })
-        .on('end', async () => {
-          try {
-            const uploadResult = await cloudinary.uploader.upload(outputPath, {
-              resource_type: 'video',
-              folder: 'processed-videos'
-            });
-
-            fs.unlinkSync(inputPath);
-            fs.unlinkSync(outputPath);
-
+        .on('end', () => {
+          // Verify the output file exists and has size > 0
+          if (fs.existsSync(outputPath) && fs.statSync(outputPath).size > 0) {
             res.json({
               success: true,
               message: 'Video processed successfully',
-              videoUrl: uploadResult.secure_url
+              videoUrl: `/uploads/processed/${outputFileName}`
             });
-          } catch (error) {
-            console.error('Cloudinary upload error:', error);
-            reject(error);
+            // Clean up input file after successful processing
+            fs.unlinkSync(inputPath);
+            resolve();
+          } else {
+            throw new Error('Output file is empty or does not exist');
           }
         })
-        .on('error', (err, stdout, stderr) => {
+        .on('error', (err) => {
           console.error('FFmpeg error:', err);
-          console.error('FFmpeg stderr:', stderr);
+          // Clean up any temporary files
+          [inputPath, outputPath].forEach(file => {
+            if (fs.existsSync(file)) {
+              fs.unlinkSync(file);
+            }
+          });
+          res.status(500).json({ 
+            error: 'Error processing video',
+            details: err.message
+          });
           reject(err);
         })
         .run();
     });
   } catch (error) {
-    console.error('Error processing video:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error processing video',
-      error: error.message
+    console.error('Processing error:', error);
+    res.status(500).json({ 
+      error: 'Server error',
+      details: error.message
     });
   }
 };

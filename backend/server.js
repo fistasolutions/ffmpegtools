@@ -21,6 +21,8 @@ const { processFrameRate } = require("./controller/framerate.js");
 const { cropVideo } = require("./controller/vedioCroping");
 const { extractFrames } = require("./controller/extractFrameFromVedio.js");
 const { videoController, videoLooping } = require("./controller/loopingVedio.js");
+const { adjustBitrate } = require("./controller/bitrateController.js");
+
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -34,7 +36,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "https://converter-frontend-rosy.vercel.app",
+      "https://ffmpeg-backend.vercel.app",
       "http://localhost:3000",
       "http://localhost:3001",
     ],
@@ -75,12 +77,15 @@ app.use("/uploads/frames", express.static(path.join(__dirname, "uploads/frames")
 app.post('/extract-frames', upload.single('video'), extractFrames);
 // app.post('/vedioController',vedioController );
 app.post("/rotate", upload.single("video"), rotateVideo);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.post('/process-video', upload.single('video'), cropVideo);
 app.post('/looping', upload.single('video'), videoLooping);
 app.post("/adjust-ratio", upload.single("video"), adjustAspectRatio);
 app.post("/speedControllers", upload.single("vedio"), speedController);
 app.post("/apply-filter", upload.single("video"), applyFilter);
 app.post('/convert/frame-rate', upload.single('video'), processFrameRate);
+app.post("/adjust-bitrate", upload.single("video"), adjustBitrate);
+
 
 app.post(
   "/watermark",

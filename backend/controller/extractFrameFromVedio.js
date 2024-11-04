@@ -10,24 +10,20 @@ const extractFrames = async (req, res) => {
         }
 
         const videoBuffer = req.file.buffer;
-        const requestedFrames = parseInt(req.body.frameRate) || 1; // This will now be the exact number of frames
+        const requestedFrames = parseInt(req.body.frameRate) || 1; 
         const outputDir = path.join(__dirname, '../uploads/frames');
         const tempVideoPath = path.join(__dirname, `../uploads/temp-${uuidv4()}.mp4`);
 
-        // Ensure directories exist
         if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
         }
 
-        // Write buffer to temporary file
         fs.writeFileSync(tempVideoPath, videoBuffer);
 
-        // Generate unique identifier for this batch of frames
         const batchId = uuidv4();
         const framesPath = path.join(outputDir, batchId);
         fs.mkdirSync(framesPath);
 
-        // Get video duration
         const getDuration = () => {
             return new Promise((resolve, reject) => {
                 ffmpeg.ffprobe(tempVideoPath, (err, metadata) => {
@@ -39,7 +35,6 @@ const extractFrames = async (req, res) => {
 
         const duration = await getDuration();
 
-        // Calculate the time interval between frames
         const interval = duration / requestedFrames;
 
         await new Promise((resolve, reject) => {
@@ -47,7 +42,7 @@ const extractFrames = async (req, res) => {
                 .screenshots({
                     count: requestedFrames,
                     timemarks: Array.from({ length: requestedFrames }, (_, i) => 
-                        Math.min(i * interval, duration - 0.001) // Ensure we don't exceed video duration
+                        Math.min(i * interval, duration - 0.001)  
                     ),
                     folder: framesPath,
                     filename: 'frame-%d.jpg',
