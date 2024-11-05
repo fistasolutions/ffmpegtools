@@ -54,6 +54,7 @@ const allLinks = [
     {
         heading: "Video Processing",
         child: [
+            { href: "/audio/encoding", label: "Vedio Encoding 264/265" },
             { href: "/video/encoding", label: "Encoding and Decoding (H.264, VP8)" },
             { href: "/video/resolution-scaling", label: "Resolution Scaling" },
             { href: "/video/frame-rate", label: "Frame Rate Adjustment" },
@@ -71,7 +72,6 @@ const allLinks = [
         heading: "Audio Processing",
         child: [
             { href: "/audio/extraction", label: "Audio Extraction" },
-            { href: "/audio/encoding", label: "Audio Encoding" },
             { href: "/audio/volume-adjustment", label: "Volume Adjustment" },
             { href: "/audio/channel-control", label: "Channel Control" },
             { href: "/audio/mixing", label: "Audio Mixing" },
