@@ -35,7 +35,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "https://ffmpeg-backend.vercel.app",
+      "https://frontend-converter.vercel.app",
       "http://localhost:3000",
       "http://localhost:3001",
     ],
@@ -107,6 +107,12 @@ app.use(
   express.static(path.join(__dirname, "uploads/screenrecording"))
 );
 app.use("/merged", express.static(path.join(__dirname, "merged")));
+
+
+// Add this route to display some text on the home page
+app.get("/", (req, res) => {
+  res.send("Welcome to the Video Processing Server!");
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -9,7 +9,7 @@ const cropVideo = async (req, res) => {
     }
 
     const inputVideo = req.file;
-    
+
     // Create directories if they don't exist
     const tempDir = path.join(__dirname, '../uploads/temp');
     const outputDir = path.join(__dirname, '../uploads/processed');
@@ -92,7 +92,7 @@ const cropVideo = async (req, res) => {
               fs.unlinkSync(file);
             }
           });
-          res.status(500).json({ 
+          res.status(500).json({
             error: 'Error processing video',
             details: err.message
           });
@@ -102,7 +102,7 @@ const cropVideo = async (req, res) => {
     });
   } catch (error) {
     console.error('Processing error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Server error',
       details: error.message
     });

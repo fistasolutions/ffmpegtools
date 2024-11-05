@@ -1,41 +1,41 @@
 'use client'
 import { useState, useRef } from 'react';
- 
-import { 
-  RotateCw, 
-  RotateCcw, 
-  FlipHorizontal, 
-  FlipVertical, 
+
+import {
+  RotateCw,
+  RotateCcw,
+  FlipHorizontal,
+  FlipVertical,
   Upload,
   Loader2
 } from 'lucide-react';
 
 export default function VideoRotation() {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [processedUrl, setProcessedUrl] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
-  const handleFileSelect = (event:any) => {
+  const handleFileSelect = (event: any) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-      setProcessedUrl(null);
-      setError(null);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url); setProcessedUrl(null);
+      setError("null");
     }
   };
 
-  const handleRotation = async (rotation:any) => {
+  const handleRotation = async (rotation: any) => {
     if (!selectedFile) {
       setError('Please select a video first');
       return;
     }
 
     setIsProcessing(true);
-    setError(null);
+    setError("null");
 
     try {
       const formData = new FormData();
@@ -53,7 +53,7 @@ export default function VideoRotation() {
 
       const data = await response.json();
       setProcessedUrl(data.url);
-    } catch (err:any) {
+    } catch (err: any) {
       setError('Error processing video: ' + err.message);
     } finally {
       setIsProcessing(false);
@@ -156,7 +156,7 @@ export default function VideoRotation() {
                 />
               </div>
             )}
-            
+
             {processedUrl && (
               <div>
                 <h3 className="text-lg font-semibold mb-2">Processed</h3>
