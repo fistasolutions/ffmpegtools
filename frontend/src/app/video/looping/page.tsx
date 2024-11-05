@@ -11,7 +11,7 @@ const VideoLooper = () => {
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
 
-  const handleFileSelect = (event) => {
+  const handleFileSelect = (event: any) => {
     const file = event.target.files[0];
     if (file) {
       if (file.type.startsWith('video/')) {
@@ -61,7 +61,7 @@ const VideoLooper = () => {
         setError(data.message || 'Error processing video');
       }
     } catch (err) {
-      setError(`Error uploading video: ${err.message}`);
+      setError(`Error uploading video:`);
     } finally {
       setLoading(false);
     }
@@ -98,35 +98,35 @@ const VideoLooper = () => {
           </div>
         )}
 
-      <div className="flex justify-around">
-        <div>
-        {previewUrl && (
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-2">Preview</h3>
-            <video
-              src={previewUrl}
-              controls
-              className="w-60 rounded-lg"
-              onError={() => setError('Error loading video preview')}
-            />
+        <div className="flex justify-around">
+          <div>
+            {previewUrl && (
+              <div className="mt-6">
+                <h3 className="text-lg font-medium mb-2">Preview</h3>
+                <video
+                  src={previewUrl}
+                  controls
+                  className="w-60 rounded-lg"
+                  onError={() => setError('Error loading video preview')}
+                />
+              </div>
+            )}
           </div>
-        )}
-        </div>
-        <div>
-        {resultUrl && (
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-2">Result</h3>
-            <video
-              src={resultUrl}
-              controls
-              loop
-              className="w-60 rounded-lg"
-              onError={() => setError('Error loading processed video')}
-            />
+          <div>
+            {resultUrl && (
+              <div className="mt-6">
+                <h3 className="text-lg font-medium mb-2">Result</h3>
+                <video
+                  src={resultUrl}
+                  controls
+                  loop
+                  className="w-60 rounded-lg"
+                  onError={() => setError('Error loading processed video')}
+                />
+              </div>
+            )}
           </div>
-        )}
         </div>
-      </div>
 
         <div className="flex items-center space-x-4">
           <label className="font-medium">Loop Count:</label>
@@ -154,7 +154,7 @@ const VideoLooper = () => {
           )}
         </button>
 
-        
+
       </div>
     </div>
   );

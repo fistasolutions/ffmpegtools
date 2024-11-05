@@ -6,11 +6,11 @@ import Button from '@/src/components/ui/button';
 
 const RecordVideoPage = () => {
   const [videoFile, setVideoFile] = useState(null);
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState<number>(1);
   const [processedVideoUrl, setProcessedVideoUrl] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
 
-  const handleFileChange = (e:any) => {
+  const handleFileChange = (e: any) => {
     setVideoFile(e.target.files[0]);
   };
 
@@ -22,7 +22,7 @@ const RecordVideoPage = () => {
 
     const formData = new FormData();
     formData.append('vedio', videoFile);
-    formData.append('speed', speed);
+    formData.append('speed', speed.toString());
 
     try {
       setStatusMessage('Processing video...');
@@ -40,23 +40,25 @@ const RecordVideoPage = () => {
   return (
     <Wrapper head='Upload and Adjust Video Speed' url=''>
       <input className='mb-4 w-full border border-gray-300 rounded-lg p-2' type="file" accept="video/*" onChange={handleFileChange} />
-      
+
       <label className='text-gray-800 my-10'>
         Select Speed:
-        <select  className='border border-1 w-full my-2 h-12 px-4 rounded' value={speed} onChange={(e) => setSpeed(e.target.value)}>
-          <option  value="0.5">0.5x</option>
+        <select className='border border-1 w-full my-2 h-12 px-4 rounded' value={speed}
+          onChange={(e) => setSpeed(parseFloat(e.target.value))}
+        >
+          <option value="0.5">0.5x</option>
           <option value="1">1x (Normal)</option>
           <option value="1.5">1.5x</option>
           <option value="2">2x</option>
         </select>
       </label>
       <Button
-                type="submit"
-                onClick={handleUpload}
-                isLoading={false}
-            >
-              upload and process vedio
-            </Button>
+        type="submit"
+        onClick={handleUpload}
+        isLoading={false}
+      >
+        upload and process vedio
+      </Button>
       <p className='text-gray-500'>{statusMessage}</p>
 
       {processedVideoUrl && (
@@ -65,7 +67,7 @@ const RecordVideoPage = () => {
           <video src={processedVideoUrl} controls style={{ width: '100%', maxHeight: '400px', border: '1px solid black' }} />
         </div>
       )}
-</Wrapper>
+    </Wrapper>
   );
 };
 

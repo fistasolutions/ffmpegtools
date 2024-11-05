@@ -206,9 +206,9 @@ const subtitles = async (req, res) => {
                     .inputFormat('mp4') // Specify the input format
                     .input(subtitlePath) // Input subtitle file
                     .inputFormat('srt') // Specify the subtitle format
-                    .outputOptions('-c:v copy') // Copy video codec
+                    .outputOptions('-vf', `subtitles=${subtitlePath}`) // Use the subtitles filter
+                    .outputOptions('-c:v libx264') // Re-encode video codec (required when using filters)
                     .outputOptions('-c:a copy') // Copy audio codec
-                    .outputOptions('-c:s mov_text') // Encode subtitles to mov_text for MP4
                     .on('start', (commandLine) => {
                         console.log('Spawned FFmpeg with command: ' + commandLine);
                     })
@@ -231,10 +231,10 @@ const subtitles = async (req, res) => {
                         console.error('Error during processing:', err);
                         return res.status(500).json({ error: 'Failed to process video with subtitles' });
                     });
+
             });
         });
     });
 };
-
 
 module.exports = { filterVideo, textOverlay, subtitles };
