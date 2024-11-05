@@ -166,12 +166,12 @@ const allLinks = [
             // { href: "/encoding/profiles", label: "Encoding Profiles" }
         ]
     },
-    {
-        heading: "Error Resilience and Recovery",
-        child: [
-            { href: "/error/correction", label: "Error Correction" },
-            // { href: "/error/detection", label: "Error Detection" },
-            // { href: "/error/tolerance", label: "Fault Tolerance" }
-        ]
-    }
+    // {
+    //     heading: "Error Resilience and Recovery",
+    //     child: [
+    //         { href: "/error/correction", label: "Error Correction" },
+    //         { href: "/error/detection", label: "Error Detection" },
+    //         { href: "/error/tolerance", label: "Fault Tolerance" }
+    //     ]
+    // }
 ];
