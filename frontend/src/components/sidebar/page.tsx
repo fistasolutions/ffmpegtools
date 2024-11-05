@@ -84,7 +84,7 @@ const allLinks = [
         child: [
             { href: "/edit/trim", label: "Cutting and Trimming" },
             { href: "/edit/concat", label: "Joining/Stitching (Concatenation)" },
-            { href: "/edit/subtitles", label: "Subtitles and Closed Captions" },
+            // { href: "/edit/subtitles", label: "Subtitles and Closed Captions" },
             { href: "/edit/overlay", label: "Overlay Images/Watermarks" },
             { href: "/edit/filters", label: "Filter Chains" },
             { href: "/edit/text-overlay", label: "Text Overlay" }
@@ -94,84 +94,84 @@ const allLinks = [
         heading: "Filters and Effects",
         child: [
             { href: "/filters/video", label: "Video Filters" },
-            { href: "/filters/audio", label: "Audio Filters" },
-            { href: "/filters/color-grading", label: "Color Grading" },
-            { href: "/filters/stabilization", label: "Motion Stabilization" },
-            { href: "/filters/equalizer", label: "Equalizer" },
-            { href: "/filters/dynamic-range", label: "Dynamic Range Compression" }
+            // { href: "/filters/audio", label: "Audio Filters" },
+            // { href: "/filters/color-grading", label: "Color Grading" },
+            // { href: "/filters/stabilization", label: "Motion Stabilization" },
+            // { href: "/filters/equalizer", label: "Equalizer" },
+            // { href: "/filters/dynamic-range", label: "Dynamic Range Compression" }
         ]
     },
-    {
-        heading: "Subtitles and Text Processing",
-        child: [
-            { href: "/subtitles/embedding", label: "Subtitle Embedding" },
-            { href: "/subtitles/conversion", label: "Subtitle Conversion" },
-            { href: "/subtitles/burn-in", label: "Burn-in Subtitles" },
-            { href: "/subtitles/animations", label: "Text Animations" }
-        ]
-    },
+    // {
+    //     heading: "Subtitles and Text Processing",
+    //     child: [
+    //         { href: "/subtitles/embedding", label: "Subtitle Embedding" },
+    //         { href: "/subtitles/conversion", label: "Subtitle Conversion" },
+    //         { href: "/subtitles/burn-in", label: "Burn-in Subtitles" },
+    //         { href: "/subtitles/animations", label: "Text Animations" }
+    //     ]
+    // },
     {
         heading: "Screenshots and Thumbnails",
         child: [
             { href: "/screenshots/extract", label: "Extract Frames" },
             { href: "/screenshots/thumbnails", label: "Create Thumbnails" },
-            { href: "/screenshots/animated", label: "Animated Thumbnails" }
+            // { href: "/screenshots/animated", label: "Animated Thumbnails" }
         ]
     },
     {
         heading: "Live Streaming and Recording",
         child: [
-            { href: "/streaming/protocols", label: "Streaming Protocols" },
+            // { href: "/streaming/protocols", label: "Streaming Protocols" },
             { href: "/recording/screen", label: "Screen Recording" },
             { href: "/recording/webcam", label: "Webcam Capture" },
-            { href: "/streaming/network", label: "Network Streaming" },
-            { href: "/streaming/copy", label: "Stream Copying" }
+            // { href: "/streaming/network", label: "Network Streaming" },
+            // { href: "/streaming/copy", label: "Stream Copying" }
         ]
     },
-    {
-        heading: "Metadata and Analysis",
-        child: [
-            { href: "/metadata/editing", label: "Metadata Editing" },
-            { href: "/metadata/analysis", label: "Stream Analysis" },
-            { href: "/metadata/bitrateManage", label: "Bitrate Management" },
-            { href: "/metadata/detection", label: "Format Detection" },
-            { href: "/metadata/preview-grids", label: "Thumbnail Preview Grids" }
-        ]
-    },
-    {
-        heading: "Advanced Video Techniques",
-        child: [
-            { href: "/advanced/chroma-keying", label: "Green Screen (Chroma Keying)" },
-            { href: "/advanced/multi-angle", label: "Multi-Angle Video" },
-            { href: "/advanced/abr", label: "Adaptive Bitrate Streaming (ABR)" },
-            { href: "/advanced/audio-tracks", label: "Dynamic Audio Track Management" },
-            { href: "/advanced/hdr-conversion", label: "HDR to SDR Conversion" }
-        ]
-    },
-    {
-        heading: "Specialized Applications",
-        child: [
-            { href: "/specialized/timelapse", label: "Timelapse Creation" },
-            { href: "/specialized/hyperlapse", label: "Hyperlapse" },
-            { href: "/specialized/gif", label: "GIF Creation" },
-            { href: "/specialized/denoising", label: "Denoising" },
-            { href: "/specialized/3d-conversion", label: "3D Video Conversion" }
-        ]
-    },
+    // {
+    //     heading: "Metadata and Analysis",
+    //     child: [
+    //         { href: "/metadata/editing", label: "Metadata Editing" },
+    //         { href: "/metadata/analysis", label: "Stream Analysis" },
+    //         { href: "/metadata/bitrateManage", label: "Bitrate Management" },
+    //         { href: "/metadata/detection", label: "Format Detection" },
+    //         { href: "/metadata/preview-grids", label: "Thumbnail Preview Grids" }
+    //     ]
+    // },
+    // {
+    //     heading: "Advanced Video Techniques",
+    //     child: [
+    //         { href: "/advanced/chroma-keying", label: "Green Screen (Chroma Keying)" },
+    //         { href: "/advanced/multi-angle", label: "Multi-Angle Video" },
+    //         { href: "/advanced/abr", label: "Adaptive Bitrate Streaming (ABR)" },
+    //         { href: "/advanced/audio-tracks", label: "Dynamic Audio Track Management" },
+    //         { href: "/advanced/hdr-conversion", label: "HDR to SDR Conversion" }
+    //     ]
+    // },
+    // {
+    //     heading: "Specialized Applications",
+    //     child: [
+    //         { href: "/specialized/timelapse", label: "Timelapse Creation" },
+    //         { href: "/specialized/hyperlapse", label: "Hyperlapse" },
+    //         { href: "/specialized/gif", label: "GIF Creation" },
+    //         { href: "/specialized/denoising", label: "Denoising" },
+    //         { href: "/specialized/3d-conversion", label: "3D Video Conversion" }
+    //     ]
+    // },
     {
         heading: "Custom Encoding Options",
         child: [
-            { href: "/encoding/hardware", label: "Hardware Acceleration" },
+            // { href: "/encoding/hardware", label: "Hardware Acceleration" },
             { href: "/encoding/multi-pass", label: "Multi-pass Encoding" },
-            { href: "/encoding/profiles", label: "Encoding Profiles" }
+            // { href: "/encoding/profiles", label: "Encoding Profiles" }
         ]
     },
     {
         heading: "Error Resilience and Recovery",
         child: [
             { href: "/error/correction", label: "Error Correction" },
-            { href: "/error/detection", label: "Error Detection" },
-            { href: "/error/tolerance", label: "Fault Tolerance" }
+            // { href: "/error/detection", label: "Error Detection" },
+            // { href: "/error/tolerance", label: "Fault Tolerance" }
         ]
     }
 ];
