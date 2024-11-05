@@ -3,6 +3,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const path = require('path');
+const exec = require('child_process').exec;
 
 const filterVideo = (req, res) => {
     const form = new formidable.IncomingForm();
@@ -155,4 +156,85 @@ const textOverlay = async (req, res) => {
     });
 }
 
-module.exports = { filterVideo, textOverlay };
+const subtitles = async (req, res) => {
+    const form = new formidable.IncomingForm();
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.error('Form parse error:', err);
+            return res.status(500).json({ error: 'Failed to parse form data' });
+        }
+
+        console.log('Parsed fields:', fields);
+        console.log('Parsed files:', files);
+
+        const videoFile = files.video[0];
+        if (!videoFile || !videoFile.originalFilename) {
+            console.error('Video file is missing or invalid:', videoFile);
+            return res.status(400).json({ error: 'Video file is missing or invalid.' });
+        }
+
+        const subtitlesText = fields.subtitles[0]; // Get the first subtitle text
+        const subtitleFormat = fields.subtitleFormat[0]; // Get the first subtitle format
+
+        // Define output paths
+        const videoPath = path.join(process.cwd(), 'uploads', videoFile.originalFilename);
+        const subtitlePath = path.join(process.cwd(), 'uploads', 'subtitles.' + subtitleFormat);
+        const outputVideoPath = path.join(process.cwd(), 'uploads', 'output_' + videoFile.originalFilename);
+
+        console.log('Video path:', videoPath);
+        console.log('Subtitle path:', subtitlePath);
+        console.log('Output video path:', outputVideoPath);
+
+        // Save the video file
+        fs.copyFile(videoFile.filepath, videoPath, async (err) => {
+            if (err) {
+                console.error('Error saving video file:', err);
+                return res.status(500).json({ error: 'Failed to save video file' });
+            }
+
+            // Write subtitles to a file
+            fs.writeFile(subtitlePath, subtitlesText.trim(), async (err) => {
+                if (err) {
+                    console.error('Error saving subtitles:', err);
+                    return res.status(500).json({ error: 'Failed to save subtitles' });
+                }
+
+                // Use FFmpeg to add subtitles
+                ffmpeg()
+                    .input(videoPath) // Input video
+                    .inputFormat('mp4') // Specify the input format
+                    .input(subtitlePath) // Input subtitle file
+                    .inputFormat('srt') // Specify the subtitle format
+                    .outputOptions('-c:v copy') // Copy video codec
+                    .outputOptions('-c:a copy') // Copy audio codec
+                    .outputOptions('-c:s mov_text') // Encode subtitles to mov_text for MP4
+                    .on('start', (commandLine) => {
+                        console.log('Spawned FFmpeg with command: ' + commandLine);
+                    })
+                    .save(outputVideoPath)
+                    .on('end', async () => {
+                        console.log('Processing finished successfully');
+
+                        // Optionally, upload the output video to Cloudinary or respond with the URL
+                        cloudinary.uploader.upload(outputVideoPath, { resource_type: "video" }, (error, result) => {
+                            if (error) {
+                                console.error('Cloudinary upload error:', error);
+                                return res.status(500).json({ error: 'Failed to upload video to Cloudinary' });
+                            }
+
+                            // Respond with the URL of the uploaded video
+                            res.status(200).json({ videoUrl: result.secure_url });
+                        });
+                    })
+                    .on('error', (err) => {
+                        console.error('Error during processing:', err);
+                        return res.status(500).json({ error: 'Failed to process video with subtitles' });
+                    });
+            });
+        });
+    });
+};
+
+
+module.exports = { filterVideo, textOverlay, subtitles };
