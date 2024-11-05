@@ -20,7 +20,7 @@ const { processFrameRate } = require("./controller/framerate.js");
 const { cropVideo } = require("./controller/vedioCroping");
 const { extractFrames } = require("./controller/extractFrameFromVedio.js");
 const { videoController, videoLooping } = require("./controller/loopingVedio.js");
-const { adjustBitrate } = require("./controller/bitrateController.js");
+const { BitrateController } = require("./controller/bitrateController.js");
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -82,7 +82,7 @@ app.post("/adjust-ratio", upload.single("video"), adjustAspectRatio);
 app.post("/speedControllers", upload.single("vedio"), speedController);
 app.post("/apply-filter", upload.single("video"), applyFilter);
 app.post('/convert/frame-rate', upload.single('video'), processFrameRate);
-app.post("/adjust-bitrate", upload.single("video"), adjustBitrate);
+app.post("/adjust-bitrate", upload.single("video"), BitrateController);
 
 
 app.post(

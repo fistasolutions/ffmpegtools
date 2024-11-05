@@ -1,47 +1,84 @@
-const ffmpeg = require("fluent-ffmpeg");
-const path = require("path");
-const fs = require("fs");
-const cloudinary = require('../lib/cloudinaryConfig');
+const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
+const path = require('path');
+const cloudinary = require('../lib/cloudinaryConfig')
 
-exports.adjustBitrate = (req, res) => {
-  const { bitrate } = req.body;
-  const videoFile = req.file;
+const BitrateController = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No video file uploaded' });
+    }
 
-  if (!bitrate || !videoFile) {
-    return res.status(400).json({ message: "Bitrate and video file are required." });
-  }
+    const { bitrate } = req.body;
 
-  const tempOutputFilePath = path.join(__dirname, "../uploads", `output_${Date.now()}.mp4`);
+    if (!bitrate || isNaN(bitrate)) {
+      return res.status(400).json({ error: 'Invalid bitrate value' });
+    }
 
-  // Adjust the bitrate using FFmpeg
-  ffmpeg(videoFile.path)
-  .inputOptions('-v debug') // Enable debug logs
-  .videoBitrate(bitrate)
-  .outputOptions("-preset fast")
-  .save(tempOutputFilePath)
-  .on('start', (commandLine) => {
-    console.log('FFmpeg command:', commandLine);
-  })
-  .on("end", async () => {
-      // Upload processed video to Cloudinary
-      try {
-        const result = await cloudinary.uploader.upload(tempOutputFilePath, {
-          resource_type: "video",
-        });
+    // Create uploads directory if it doesn't exist
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
 
-        // Send the Cloudinary URL as a response
-        res.json({ url: result.secure_url });
+    // Generate unique filenames
+    const timestamp = Date.now();
+    const inputPath = path.join(uploadsDir, `input_${timestamp}.mp4`);
+    const outputPath = path.join(uploadsDir, `output_${timestamp}.mp4`);
 
-        // Clean up local files
-        fs.unlinkSync(tempOutputFilePath);
-        fs.unlinkSync(videoFile.path);
-      } catch (err) {
-        console.error("Error uploading to Cloudinary:", err);
-        res.status(500).json({ message: "Error uploading to Cloudinary" });
-      }
-    })
-    .on("error", (err) => {
-      console.error("Error processing video:", err);
-      res.status(500).json({ message: "Error processing video" });
+    // Save uploaded file
+    fs.writeFileSync(inputPath, req.file.buffer);
+
+    // Process video with new bitrate
+    
+    await new Promise((resolve, reject) => {
+      ffmpeg(inputPath)
+        .videoCodec('libx264')
+        .videoBitrate(bitrate)
+        .audioCodec('aac')
+        .audioBitrate('128k')
+        .format('mp4')
+        .on('progress', (progress) => {
+          console.log('Processing: ' + progress.percent + '% done');
+        })
+        .on('end', () => {
+          console.log('Video processing completed');
+          resolve();
+        })
+        .on('error', (err) => {
+          console.error('Error:', err);
+          reject(err);
+        })
+        .save(outputPath);
     });
+
+    // Get file stats
+    const stats = {
+      originalSize: req.file.size,
+      processedSize: fs.statSync(outputPath).size,
+      compressionRatio: Math.round((fs.statSync(outputPath).size / req.file.size) * 100) + '%'
+    };
+
+    // Return processed video path
+    const videoUrl = `/uploads/${path.basename(outputPath)}`;
+    
+    // Clean up input file
+    fs.unlinkSync(inputPath);
+
+    // Send response
+    return res.json({
+      success: true,
+      videoUrl,
+      stats
+    });
+
+  } catch (error) {
+    console.error('Error in video processing:', error);
+    return res.status(500).json({ 
+      error: 'Video processing failed', 
+      details: error.message 
+    });
+  }
 };
+
+module.exports = { BitrateController };
