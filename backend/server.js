@@ -21,6 +21,10 @@ const { cropVideo } = require("./controller/vedioCroping");
 const { extractFrames } = require("./controller/extractFrameFromVedio.js");
 const { videoController, videoLooping } = require("./controller/loopingVedio.js");
 const { BitrateController } = require("./controller/bitrateController.js");
+const { generateAnimatedThumbnail } = require("./controller/animatedThumbnail.js");
+const { removeBackground } = require("./controller/backgroundRemove.js");
+const { applyEqualizer  } = require("./controller/audioEquilizer.js");
+
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -83,7 +87,9 @@ app.post("/speedControllers", upload.single("vedio"), speedController);
 app.post("/apply-filter", upload.single("video"), applyFilter);
 app.post('/convert/frame-rate', upload.single('video'), processFrameRate);
 app.post("/adjust-bitrate", upload.single("video"), BitrateController);
-
+app.post("/generate-thumbnail", upload.single("file"), generateAnimatedThumbnail);
+app.post("/remove-background", upload.single("file"), removeBackground);
+app.post("/equalizer", upload.single("video"), applyEqualizer );
 
 app.post(
   "/watermark",

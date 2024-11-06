@@ -186,7 +186,7 @@ const FormatCompatibility = (req, res) => {
             '-b:a 128k',     // Set audio bitrate
             '-strict experimental' // Allow experimental features if using AAC
         ])
-        .outputFormat('webm') // Specify output format
+        .outputFormat(format) // Specify output format
         .on('stderr', (stderrLine) => {
             console.error('FFmpeg stderr:', stderrLine);
         })
