@@ -47,7 +47,7 @@ const allLinks = [
     {
         heading: "Basic Format Conversion",
         child: [
-            { href: "/format-conversion/video", label: "Video Format Conversion (MP4 to AVI)" },
+            // { href: "/format-conversion/video", label: "Video Format Conversion (MP4 to AVI)" },
             { href: "/format-conversion/audio", label: "Audio Format Conversion (WAV to MP3)" },
         ]
     },
@@ -94,6 +94,7 @@ const allLinks = [
         heading: "Filters and Effects",
         child: [
             { href: "/filters/video", label: "Video Filters" },
+            { href: "/filters/audio", label: "Audio Equilizer" },
             // { href: "/filters/audio", label: "Audio Filters" },
             // { href: "/filters/color-grading", label: "Color Grading" },
             // { href: "/filters/stabilization", label: "Motion Stabilization" },
@@ -115,6 +116,7 @@ const allLinks = [
         child: [
             { href: "/screenshots/extract", label: "Extract Frames" },
             { href: "/screenshots/thumbnails", label: "Create Thumbnails" },
+            { href: "/screenshots/animatedThumbnail", label: "Animated Thumbnail" },
             // { href: "/screenshots/animated", label: "Animated Thumbnails" }
         ]
     },
@@ -126,6 +128,12 @@ const allLinks = [
             { href: "/recording/webcam", label: "Webcam Capture" },
             // { href: "/streaming/network", label: "Network Streaming" },
             // { href: "/streaming/copy", label: "Stream Copying" }
+        ]
+    },
+    {
+        heading: "Advanced vedio Techniques",
+        child: [
+            { href: "/advancedVedio/removeBackground", label: "Vedio Background Remove" },
         ]
     },
     // {
